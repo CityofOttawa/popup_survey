@@ -1,7 +1,183 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Shows this popup on every page except the listed pages.
  */
-?>
+define('POPUP_VISIBILITY_NOTLISTED', 0);
+
+/**
+ * Shows this block on only the listed pages.
+ */
+define('POPUP_VISIBILITY_LISTED', 1);
+
+/**
+ * Implements hook_menu().
+ */
+function popup_survey_menu() {
+  $items = array();
+  
+  $items['admin/config/services/popup-survey'] = array(
+    'title' => 'Popup Survey',
+    'description' => 'Settings for Popup Survey.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('popup_survey_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function popup_survey_admin_settings() {
+  $form = array();
+
+  $form['popup_survey_bean'] = array(
+    '#type'        => 'select',
+    '#title'       => t('Popup Block'),
+    '#description' => t('Select the block that you would like to display to visitors as the survey invitation. If you wish not to display the popup select \'none\' for the popup block.'),
+    '#options'     => popup_survey_bean_options(),
+    '#default_value' => variable_get('popup_survey_bean', 0),
+    '#required' => TRUE,
+  );
+  
+  $form['popup_survey_frequency'] = array(
+    '#type'        => 'select',
+    '#title'       => t('Popup Frequency'),
+    '#description' => t('Display the popup for one out of every # visitors.'),
+    '#options'     => popup_survey_frequency_options(),
+    '#default_value' => variable_get('popup_survey_frequency', 1),
+    '#required' => TRUE,
+  );
+  
+  // Visibility settings.
+  $form['visibility_title'] = array(
+    '#type' => 'item',
+    '#title' => t('Visibility settings'),
+  );
+    
+  $options = array(
+    POPUP_VISIBILITY_NOTLISTED => t('All pages except those listed'),
+    POPUP_VISIBILITY_LISTED => t('Only the listed pages'),
+  );
+  
+  $form['popup_survey_visibility_options'] = array(
+    '#type' => 'radios',
+    '#title' => t('Show block on specific pages'),
+    '#options' => $options,
+    '#default_value' => variable_get('popup_survey_visibility_options', POPUP_VISIBILITY_NOTLISTED),
+  );
+  
+  $form['popup_survey_visibility_options_pages'] = array(
+    '#type' => 'textarea',
+    '#title' => '<span class="element-invisible">' . t('Pages') . '</span>',
+    '#default_value' => variable_get('popup_survey_visibility_options_pages',''),
+    '#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", array('%blog' => 'blog', '%blog-wildcard' => 'blog/*', '%front' => '<front>')),
+  );
+  
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function popup_survey_page_build(&$page) {
+  // Performance: Skip this entirely for AJAX requests.
+  if (strpos($_GET['q'], 'js/') === 0) {
+    return;
+  }
+  // Skip this if the bean to display is not set.
+  $bid = variable_get('popup_survey_bean', FALSE);
+  if($bid != FALSE) {
+    // Randomly skip so that not all users see the popup.
+    if( mt_rand(1, variable_get('popup_survey_frequency', 1)) === 1 ) {
+      
+      // Limited visibility popupd must list at least one page.
+      $visibility = variable_get('popup_survey_visibility_options', POPUP_VISIBILITY_LISTED);
+      $visibility_pages = variable_get('popup_survey_visibility_options_pages','');
+      
+      if ( $visibility == POPUP_VISIBILITY_LISTED && $visibility_pages == '') {
+        return;
+      }
+      
+      if( $visibility_pages ) {
+        $pages = drupal_strtolower($visibility_pages);
+        $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+        $page_match = drupal_match_path($path, $pages);
+        if ($path != $_GET['q']) {
+          $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+        }
+        
+        $page_match = !($visibility xor $page_match);
+        
+        if (!$page_match) { return; }
+      }
+
+      $path = drupal_get_path('module', 'popup_survey');
+  
+      $page['page_bottom']['popup_survey'] = array ( '#attached' => array(), );
+      $attached = &$page['page_bottom']['popup_survey']['#attached'];
+      $options = array('every_page' => TRUE);
+  
+      $attached['css'][$path . '/css/popup_survey.css'] = $options;
+      $attached['js'][$path . '/js/popup_survey.js'] = $options;
+      $bean = entity_view('bean', entity_load('bean', array($bid)));
+      $page['page_bottom']['popup_survey']['#markup'] = render($bean) . '<p>' . variable_get('popup_survey_visibility_options_pages','') . '</p>';
+  
+      // DEBUG: dpm($page['page_bottom']['popup_survey']);
+    }
+  } 
+}
+
+/**
+ * Return a keyed array of bean ides with their labels. This is used to provide
+ * select options to the Popul Block select box on the settings form.
+ * @return array of bean ids and labels.
+ */
+function popup_survey_bean_options() {
+  // Query the database for all entities that are of type bean
+  // and of sub-type survey_popup_message.
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'bean', '=')
+    ->propertyCondition('type', 'survey_popup_message', '=');
+  $result = $query->execute();
+  
+  // From the query result pull out each of the bean ids.
+  $ids = array();
+  foreach($result['bean'] as $record) {
+    $ids[] = $record->bid;
+  }
+  // Load each of the survey_popup_message beans and add their bean id
+  // to the option array as the key and the label as the value.
+  $beans = entity_load('bean', $ids);
+  $options    = array();
+  $options[0] = '- ' . t('none') . ' -';
+  foreach($beans as $bean) {
+      $options[$bean->bid] = $bean->label;
+  }
+  return $options;
+}
+
+/**
+ * Return a key => value array from 1 to 100.  This is used to provide options
+ * to the frequency select box on the survey admin form.
+ * @return array from 1 to 100.
+ */
+function popup_survey_frequency_options() {
+  return array(
+    1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9,
+    10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16,
+    17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 
+    24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30,
+    31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37,
+    38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44,
+    45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51,
+    52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 
+    59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65,
+    66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72,
+    73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79,
+    80 => 80, 81 => 81, 82 => 82, 83 => 83, 84 => 84, 85 => 85, 86 => 86,
+    87 => 87, 88 => 88, 89 => 89, 90 => 90, 91 => 91, 92 => 92, 93 => 93,
+    94 => 94, 95 => 95, 96 => 96, 97 => 97, 98 => 98, 99 => 99, 100 => 100,
+  );
+}

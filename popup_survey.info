@@ -1,0 +1,5 @@
+name = Popup Survey
+description = "Provides a popup box that can be configured to display only on certain pages and for only 1 out of every X users."
+package = Bagler IT
+core = 7.x
+configure = admin/config/services/popup-survey
