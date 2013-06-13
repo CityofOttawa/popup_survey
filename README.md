@@ -1,4 +1,2 @@
-popup_survey
-============
-
+# Popup Survey
 A drupal module for popup surveys.
