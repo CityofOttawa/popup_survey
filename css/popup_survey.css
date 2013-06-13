@@ -1,0 +1,4 @@
+.bean-survey-popup-message {
+  position: fixed;
+  z-index: 1000;
+}

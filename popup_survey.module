@@ -121,11 +121,25 @@ function popup_survey_page_build(&$page) {
       $attached['css'][$path . '/css/popup_survey.css'] = $options;
       $attached['js'][$path . '/js/popup_survey.js'] = $options;
       $bean = entity_view('bean', entity_load('bean', array($bid)));
-      $page['page_bottom']['popup_survey']['#markup'] = render($bean) . '<p>' . variable_get('popup_survey_visibility_options_pages','') . '</p>';
+      $page['page_bottom']['popup_survey']['#markup'] = render($bean);
   
       // DEBUG: dpm($page['page_bottom']['popup_survey']);
     }
   } 
+}
+
+function popup_survey_preprocess_entity(&$var) {
+  if ($var['entity_type'] == 'bean' && $var['elements']['#bundle'] = 'survey_popup_message')
+  {
+    $url = $var['content']['field_survey_link'][0]['#markup'];
+    $title = $var['content']['field_survey_link_title'][0]['#markup'];
+    $var['content']['field_survey_link'][0]['#markup'] = '<a href="' . $url . '" target="_blank" title="' . $title . '">' . $title . '</a>';
+    
+    $var['content']['title_field'][0]['#markup'] = '<h2>' . $var['content']['title_field'][0]['#markup'] . '</h2>';
+    
+    unset($var['content']['field_survey_link_title']);
+    // DEBUG: dpm($var);
+  }
 }
 
 /**
