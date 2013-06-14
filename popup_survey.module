@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the Popup Survey feature.
+ */
+
+include_once 'popup-survey.features.inc';
 
 /**
  * Shows this popup on every page except the listed pages.
