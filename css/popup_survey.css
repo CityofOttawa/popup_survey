@@ -1,4 +1,14 @@
 .bean-survey-popup-message {
   position: fixed;
-  z-index: 1000;
-}
+  top: 50%;
+  left: 50%;
+  z-index: 999;
+  max-width: 100%;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 5px solid #0059B2;
+  border-radius: 5px;
+  box-shadow: 10px 10px 5px #888888; }
+  .bean-survey-popup-message .button {
+    float: right;
+    padding: 5px; }
