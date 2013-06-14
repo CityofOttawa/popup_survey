@@ -85,6 +85,10 @@ function popup_survey_page_build(&$page) {
   if (strpos($_GET['q'], 'js/') === 0) {
     return;
   }
+  // Skip this if the visitor is logged in.
+  if (!user_is_anonymous()) {
+    return;
+  }
   // Skip this if the bean to display is not set.
   $bid = variable_get('popup_survey_bean', FALSE);
   if($bid != FALSE) {
