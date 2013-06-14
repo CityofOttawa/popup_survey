@@ -1,6 +1,6 @@
 name = Popup Survey
 description = "Provides a popup box that can be configured to display only on certain pages and for only 1 out of every X users."
-package = Bagler IT
+package = City of Ottawa
 core = 7.x
 configure = admin/config/services/popup-survey
 version = 7.x-1.0-beta1
