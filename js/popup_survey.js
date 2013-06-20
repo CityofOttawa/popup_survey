@@ -1,4 +1,3 @@
-
 // JavaScript should be made compatible with libraries other than jQuery by
 // wrapping it with an "anonymous closure". See:
 // - http://drupal.org/node/1446420
@@ -7,29 +6,33 @@
 
   $(document).ready(function() {
     centrePopup();
-    
+
     var cookie = readCookie('ottcity_site_survey');
 
     if (!cookie) {
       createCookie('ottcity_site_survey','isActive', 14);
+      $('.popup-greyout').addClass('cover');
     }
     else {
       $('.bean-survey-popup-message').hide();
+      $('.popup-greyout').hide();
     }
-  
+
     $(window).resize(function() {
-      centrePopup();  
+      centrePopup();
     });
-  
+
     $('#popup-reject').click(function(event) {
       event.preventDefault();
       $('.bean-survey-popup-message').hide();
+      $('.popup-greyout').hide();
     });
-    
+
     $('#popup-accept').click(function(event) {
       event.preventDefault();
       surveyWindow = popUnder($(this).attr('href'));
       $('.bean-survey-popup-message').hide();
+      $('.popup-greyout').hide();
     });
     
   });

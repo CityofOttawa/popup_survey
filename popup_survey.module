@@ -131,7 +131,7 @@ function popup_survey_page_build(&$page) {
       $attached['css'][$path . '/css/popup_survey.css'] = $options;
       $attached['js'][$path . '/js/popup_survey.js'] = $options;
       $bean = entity_view('bean', entity_load('bean', array($bid)));
-      $page['page_bottom']['popup_survey']['#markup'] = render($bean);
+      $page['page_bottom']['popup_survey']['#markup'] = '<div class="popup-greyout">' . render($bean) . '</div>';
   
       // DEBUG: dpm($page['page_bottom']['popup_survey']);
     }
@@ -150,16 +150,14 @@ function popup_survey_preprocess_entity(&$var) {
     $title = $var['content']['field_survey_link_title'][0]['#markup'];
     $reject = $var['content']['field_cancel_link_title'][0]['#markup'];
     // Turn the Survey Link and Survey Link Title fields into one anchor tag.
-    $var['content']['field_survey_link'][0]['#markup'] = '<a href="' . $url . '" target="_blank" title="' . $title . '" id="popup-accept" class="button button-confirm">' . $title . '</a>';
+    $var['content']['field_survey_link'][0]['#markup'] = '<a href="' . $url . '" target="_blank" title="' . $title . '" id="popup-accept" class="button">' . $title . '</a>';
     // Turn the Cancel Link Title field into an anchor tag.
-    $var['content']['field_cancel_link_title'][0]['#markup'] = '<a href="#" id="popup-reject" class="button button-accent" title="' . t('I do not want to participate in the survey.') . '">' . $reject . '</a>';
+    $var['content']['field_cancel_link_title'][0]['#markup'] = '<a href="#" id="popup-reject" class="button" title="' . t('I do not want to participate in the survey.') . '">' . $reject . '</a>';
     // Turn the title field into an H2 tag.
     $var['content']['title_field'][0]['#markup'] = '<h2>' . $var['content']['title_field'][0]['#markup'] . '</h2>';
     // Add the message class to the bean's container.
-    $var['classes_array'][] = 'module-alert';
     unset($var['content']['field_survey_link_title']);
-    // DEBUG:
-    dpm($var);
+    // DEBUG: dpm($var);
   }
 }
 
