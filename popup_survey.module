@@ -144,7 +144,7 @@ function popup_survey_page_build(&$page) {
  * @param array $var a keyed array with the entity data and meta data.
  */
 function popup_survey_preprocess_entity(&$var) {
-  if ($var['entity_type'] == 'bean' && $var['elements']['#bundle'] = 'survey_popup_message')
+  if ($var['entity_type'] == 'bean' && $var['elements']['#bundle'] == 'survey_popup_message')
   {
     $url = $var['content']['field_survey_link'][0]['#markup'];
     $title = $var['content']['field_survey_link_title'][0]['#markup'];
