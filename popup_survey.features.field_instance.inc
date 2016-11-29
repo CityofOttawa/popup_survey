@@ -24,6 +24,13 @@ function popup_survey_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 2,
       ),
+      'def_view' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
+      ),
       'ical' => array(
         'label' => 'above',
         'settings' => array(),
@@ -59,6 +66,13 @@ function popup_survey_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 1,
+      ),
+      'def_view' => array(
         'label' => 'hidden',
         'module' => 'text',
         'settings' => array(),
@@ -106,6 +120,13 @@ function popup_survey_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 4,
       ),
+      'def_view' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 4,
+      ),
       'ical' => array(
         'label' => 'above',
         'settings' => array(),
@@ -147,6 +168,13 @@ function popup_survey_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 3,
       ),
+      'def_view' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 3,
+      ),
       'ical' => array(
         'label' => 'above',
         'settings' => array(),
@@ -182,6 +210,13 @@ function popup_survey_field_default_field_instances() {
     'description' => 'The Title of the block.',
     'display' => array(
       'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+      'def_view' => array(
         'label' => 'hidden',
         'module' => 'text',
         'settings' => array(),
