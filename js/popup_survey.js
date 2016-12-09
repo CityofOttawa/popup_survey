@@ -66,8 +66,9 @@
   function centrePopup() {
     var $popup = $('.bean-survey-popup-message');
     if(1 <= $popup.length) {
-      $popup.css( "margin-top", -$popup.height() / 2 + "px" );
-      $popup.css( "margin-left", -$popup.width() / 2 + "px" );
+      $popup.css("margin-top", -$popup.height() / 2 + "px");
+      $popup.css("margin-left", -$popup.width() / 2 + "px");
+      $popup.css("visibility", "visible");
     }
   }
   
