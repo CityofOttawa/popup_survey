@@ -6,6 +6,7 @@
 
   $(document).ready(function() {
     centrePopup();
+    focusOnPopup();
 
     var cookie = readCookie('ottcity_site_survey');
 
@@ -37,10 +38,37 @@
     
   });
 
+  function focusOnPopup() {
+    var $popup = $('.bean-survey-popup-message');
+    var $accept = $('#popup-accept');
+    if(1 <= $popup.length && 1 <= $accept.length) {
+      $popup.attr('tabindex', -1);
+      $popup.focus();
+      // Modal Trap
+      // Tabbing past the accept button takes you to the top of the modal.
+      $accept.on('keydown', function (e) {
+        if ((e.which === 9 && !e.shiftKey)) {
+          e.preventDefault();
+          $popup.focus();
+        }
+      });
+      // Shift tabbing back past the modal takes you to the accept button of the modal.
+      $popup.on('keydown', function (e) {
+        if ((e.which === 9 && e.shiftKey)) {
+          e.preventDefault();
+          $accept.focus();
+        }
+      });
+
+    }
+  }
+
   function centrePopup() {
     var $popup = $('.bean-survey-popup-message');
-    $popup.css( "margin-top", -$popup.height() / 2 + "px" );
-    $popup.css( "margin-left", -$popup.width() / 2 + "px" );
+    if(1 <= $popup.length) {
+      $popup.css( "margin-top", -$popup.height() / 2 + "px" );
+      $popup.css( "margin-left", -$popup.width() / 2 + "px" );
+    }
   }
   
   function popUnder(url) {
