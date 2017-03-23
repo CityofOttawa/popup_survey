@@ -6,7 +6,6 @@
 
 include_once 'popup_survey.features.inc';
 
-//use Jaybizzle\CrawlerDetect\CrawlerDetect;
 /**
  * Shows this popup on every page except the listed pages.
  */
