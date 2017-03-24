@@ -5,7 +5,9 @@
   max-width: 100%;
   background-color: #ffffff;
   padding: 10px;
-  box-shadow: 3px 3px 3px #444444; }
+  box-shadow: 3px 3px 3px #444444;
+  display: none;
+}
   .bean-survey-popup-message .button {
     float: right;
     padding: 5px;
