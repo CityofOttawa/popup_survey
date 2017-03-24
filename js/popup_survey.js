@@ -6,9 +6,9 @@
 
   $(document).ready(function() {
     centrePopup();
-    var bots = /alexa|bot|crawl|bing|facebookexternalhit|feedburner|google|preview|nagios|postrank|pingdom|slurp|spider|yahoo|yandex|sogou/i;
-    
-    if( navigator.userAgent && navigator.userAgent.match(bots) ) {
+
+    var bots = new RegExp(Drupal.settings.POPUP_SURVEY.botlist, "i");
+    if( navigator.userAgent && bots.test(navigator.userAgent) ) {
       return;
     }
 

@@ -66,6 +66,13 @@ function popup_survey_admin_settings() {
     POPUP_VISIBILITY_LISTED => t('Only the listed pages'),
   );
 
+  $form['popup_survey_ua_exclude'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Block blacklist'),
+    '#description' => t('User agents that match the list will not be presented with the survey popup.  Separate terms by a pipe (|) without spaces.  Do not enter line breaks.'),
+    '#default_value' => variable_get('popup_survey_ua_exclude', 'alexa|bot|crawl|bing|facebookexternalhit|feedburner|google|preview|nagios|postrank|pingdom|slurp|spider|yahoo|yandex|sogou'),
+  );
+
   $form['popup_survey_visibility_options'] = array(
     '#type' => 'radios',
     '#title' => t('Show block on specific pages'),
@@ -82,6 +89,17 @@ function popup_survey_admin_settings() {
 
   return system_settings_form($form);
 }
+
+/**
+ *  Perform basic input validation
+ */
+function popup_survey_admin_settings_validate($form, $form_state) {
+  $ua = $form_state['values']['popup_survey_ua_exclude'];
+  if( strlen($ua) > 0 && (substr($ua,0,1) == '|' || substr($ua,strlen($ua)-1,1)=='|') ) {
+    form_set_error('popup_survey_ua_exclude', t('Value cannot start or end with a pipe (|) delimiter'));
+  }
+}
+
 
 /**
  * Implements hook_page_build().
@@ -129,6 +147,9 @@ function popup_survey_page_build(&$page) {
       $page['page_bottom']['popup_survey'] = array ( '#attached' => array(), );
       $attached = &$page['page_bottom']['popup_survey']['#attached'];
       $options = array('every_page' => TRUE);
+
+      $ua = check_plain(variable_get('popup_survey_ua_exclude',''));
+      drupal_add_js(array('POPUP_SURVEY' => array('botlist' => $ua)), array('type' => 'setting'));
 
       $attached['css'][$path . '/css/popup_survey.css'] = $options;
       $attached['js'][$path . '/js/popup_survey.js'] = $options;
