@@ -6,9 +6,9 @@
 
   $(document).ready(function() {
     centrePopup();
-    var bots = /alexa|bot|crawl|facebookexternalhit|feedburner|google web preview|nagios|postrank|pingdom|slurp|spider|yahoo!|yandex|sogou/i;
-
-    if( navigator.userAgent.match(bots) ) {
+    var bots = /alexa|bot|crawl|bing|facebookexternalhit|feedburner|google|preview|nagios|postrank|pingdom|slurp|spider|yahoo|yandex|sogou/i;
+    
+    if( navigator.userAgent && navigator.userAgent.match(bots) ) {
       return;
     }
 
