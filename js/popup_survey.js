@@ -8,17 +8,11 @@
     centrePopup();
     focusOnPopup();
 
-    var bots = new RegExp(Drupal.settings.POPUP_SURVEY.botlist, "i");
-    if( navigator.userAgent && bots.test(navigator.userAgent) ) {
-      return;
-    }
-
     var cookie = readCookie('ottcity_site_survey');
 
-    if(!cookie) {
+    if (!cookie) {
       createCookie('ottcity_site_survey','isActive', 14);
       $('.popup-greyout').addClass('cover');
-      $('.bean-survey-popup-message').show();
     }
     else {
       $('.bean-survey-popup-message').hide();
@@ -41,7 +35,7 @@
       $('.bean-survey-popup-message').hide();
       $('.popup-greyout').hide();
     });
-
+    
   });
 
   function focusOnPopup() {
@@ -77,7 +71,7 @@
       $popup.css("visibility", "visible");
     }
   }
-
+  
   function popUnder(url) {
     var popUnderWin;
     var nav = navigator.userAgent;
@@ -89,16 +83,16 @@
     if (isGecko) {
       popUnderWin.window.open("about:blank").close();
     }
-
+  
     popUnderWin.document.location.href = url;
 
     setTimeout(window.focus);
     window.focus();
     popUnderWin.blur();
-
+    
     return popUnderWin;
   }
-
+  
   function createCookie(name,value,days) {
     var expires = "";
     if (days) {
@@ -120,5 +114,5 @@
     return null;
   }
 
-
+  
 })(jQuery, Drupal, this, this.document);
