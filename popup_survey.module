@@ -21,7 +21,7 @@ define('POPUP_VISIBILITY_LISTED', 1);
  */
 function popup_survey_menu() {
   $items = array();
-
+  
   $items['admin/config/services/popup-survey'] = array(
     'title' => 'Popup Survey',
     'description' => 'Settings for Popup Survey.',
@@ -45,7 +45,7 @@ function popup_survey_admin_settings() {
     '#default_value' => variable_get('popup_survey_bean', 0),
     '#required' => TRUE,
   );
-
+  
   $form['popup_survey_frequency'] = array(
     '#type'        => 'select',
     '#title'       => t('Popup Frequency'),
@@ -54,52 +54,34 @@ function popup_survey_admin_settings() {
     '#default_value' => variable_get('popup_survey_frequency', 1),
     '#required' => TRUE,
   );
-
+  
   // Visibility settings.
   $form['visibility_title'] = array(
     '#type' => 'item',
     '#title' => t('Visibility settings'),
   );
-
+    
   $options = array(
     POPUP_VISIBILITY_NOTLISTED => t('All pages except those listed'),
     POPUP_VISIBILITY_LISTED => t('Only the listed pages'),
   );
-
-  $form['popup_survey_ua_exclude'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Block blacklist'),
-    '#description' => t('User agents that match the list will not be presented with the survey popup.  Separate terms by a pipe (|) without spaces.  Do not enter line breaks.'),
-    '#default_value' => variable_get('popup_survey_ua_exclude', 'alexa|bot|crawl|bing|facebookexternalhit|feedburner|google|preview|nagios|postrank|pingdom|slurp|spider|yahoo|yandex|sogou'),
-  );
-
+  
   $form['popup_survey_visibility_options'] = array(
     '#type' => 'radios',
     '#title' => t('Show block on specific pages'),
     '#options' => $options,
     '#default_value' => variable_get('popup_survey_visibility_options', POPUP_VISIBILITY_NOTLISTED),
   );
-
+  
   $form['popup_survey_visibility_options_pages'] = array(
     '#type' => 'textarea',
     '#title' => '<span class="element-invisible">' . t('Pages') . '</span>',
     '#default_value' => variable_get('popup_survey_visibility_options_pages',''),
     '#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", array('%blog' => 'blog', '%blog-wildcard' => 'blog/*', '%front' => '<front>')),
   );
-
+  
   return system_settings_form($form);
 }
-
-/**
- *  Perform basic input validation
- */
-function popup_survey_admin_settings_validate($form, $form_state) {
-  $ua = $form_state['values']['popup_survey_ua_exclude'];
-  if( strlen($ua) > 0 && (substr($ua,0,1) == '|' || substr($ua,strlen($ua)-1,1)=='|') ) {
-    form_set_error('popup_survey_ua_exclude', t('Value cannot start or end with a pipe (|) delimiter'));
-  }
-}
-
 
 /**
  * Implements hook_page_build().
@@ -109,26 +91,24 @@ function popup_survey_page_build(&$page) {
   if (strpos($_GET['q'], 'js/') === 0) {
     return;
   }
-
-  // Skip this if the visitor is logged in or determined to be a crawler.
-  if (!user_is_anonymous() ) {
+  // Skip this if the visitor is logged in.
+  if (!user_is_anonymous()) {
     return;
   }
-
   // Skip this if the bean to display is not set.
   $bid = variable_get('popup_survey_bean', FALSE);
   if($bid != FALSE) {
     // Randomly skip so that not all users see the popup.
     if( mt_rand(1, variable_get('popup_survey_frequency', 1)) === 1 ) {
-
+      
       // Limited visibility popupd must list at least one page.
       $visibility = variable_get('popup_survey_visibility_options', POPUP_VISIBILITY_LISTED);
       $visibility_pages = variable_get('popup_survey_visibility_options_pages','');
-
+      
       if ( $visibility == POPUP_VISIBILITY_LISTED && $visibility_pages == '') {
         return;
       }
-
+      
       if( $visibility_pages ) {
         $pages = drupal_strtolower($visibility_pages);
         $path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
@@ -136,29 +116,26 @@ function popup_survey_page_build(&$page) {
         if ($path != $_GET['q']) {
           $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
         }
-
+        
         $page_match = !($visibility xor $page_match);
-
+        
         if (!$page_match) { return; }
       }
 
       $path = drupal_get_path('module', 'popup_survey');
-
+  
       $page['page_bottom']['popup_survey'] = array ( '#attached' => array(), );
       $attached = &$page['page_bottom']['popup_survey']['#attached'];
       $options = array('every_page' => TRUE);
-
-      $ua = check_plain(variable_get('popup_survey_ua_exclude',''));
-      drupal_add_js(array('POPUP_SURVEY' => array('botlist' => $ua)), array('type' => 'setting'));
-
+  
       $attached['css'][$path . '/css/popup_survey.css'] = $options;
       $attached['js'][$path . '/js/popup_survey.js'] = $options;
       $bean = entity_view('bean', entity_load('bean', array($bid)));
       $page['page_bottom']['popup_survey']['#markup'] = '<div class="popup-greyout">' . render($bean) . '</div>';
-
+  
       // DEBUG: dpm($page['page_bottom']['popup_survey']);
     }
-  }
+  } 
 }
 
 
@@ -197,15 +174,12 @@ function popup_survey_bean_options() {
     ->entityCondition('entity_type', 'bean', '=')
     ->propertyCondition('type', 'survey_popup_message', '=');
   $result = $query->execute();
-
+  
   // From the query result pull out each of the bean ids.
   $ids = array();
-  if( count($result) > 0 ) {
-    foreach($result['bean'] as $record) {
-      $ids[] = $record->bid;
-    }
+  foreach($result['bean'] as $record) {
+    $ids[] = $record->bid;
   }
-
   // Load each of the survey_popup_message beans and add their bean id
   // to the option array as the key and the label as the value.
   $beans = entity_load('bean', $ids);
@@ -226,12 +200,12 @@ function popup_survey_frequency_options() {
   return array(
     1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9,
     10 => 10, 11 => 11, 12 => 12, 13 => 13, 14 => 14, 15 => 15, 16 => 16,
-    17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23,
+    17 => 17, 18 => 18, 19 => 19, 20 => 20, 21 => 21, 22 => 22, 23 => 23, 
     24 => 24, 25 => 25, 26 => 26, 27 => 27, 28 => 28, 29 => 29, 30 => 30,
     31 => 31, 32 => 32, 33 => 33, 34 => 34, 35 => 35, 36 => 36, 37 => 37,
     38 => 38, 39 => 39, 40 => 40, 41 => 41, 42 => 42, 43 => 43, 44 => 44,
     45 => 45, 46 => 46, 47 => 47, 48 => 48, 49 => 49, 50 => 50, 51 => 51,
-    52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58,
+    52 => 52, 53 => 53, 54 => 54, 55 => 55, 56 => 56, 57 => 57, 58 => 58, 
     59 => 59, 60 => 60, 61 => 61, 62 => 62, 63 => 63, 64 => 64, 65 => 65,
     66 => 66, 67 => 67, 68 => 68, 69 => 69, 70 => 70, 71 => 71, 72 => 72,
     73 => 73, 74 => 74, 75 => 75, 76 => 76, 77 => 77, 78 => 78, 79 => 79,
