@@ -1,0 +1,64 @@
+{
+  "name": "@ottca/popup_survey",
+  "description": "Provides a popup box that can be configured to display only on certain pages and for only 1 out of every X users.",
+  "private": true,
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions || true",
+    "init": "composer install && (npm ci || npm install)",
+    "commit": "npx git-cz",
+    "release": "standard-version",
+    "build": "npx gulp buildProd",
+    "build:prod": "npm run build && npm run clean",
+    "build:dev": "npx gulp buildDev",
+    "clean": "rm -rf node_modules && rm -rf bin && rm -rf vendor",
+    "watch": "npx gulp watch",
+    "lint": "npm run lint:php",
+    "lint:fix": "npm run lint:php:fix",
+    "lint:styles": "npx gulp lintStyles",
+    "lint:styles:fix": "npx gulp lintStylesFix",
+    "lint:scripts": "npx gulp lintScripts",
+    "lint:scripts:fix": "npx gulp lintScriptsFix",
+    "lint:php": "phpcs --extensions=php,module,inc,install,test,profile,theme --ignore=bin/*,config/*,node_modules/*,vendor/*,*.md --standard=Drupal,DrupalPractice ./",
+    "lint:php:fix": "phpcbf --extensions=php,module,inc,install,test,profile,theme --ignore=bin/*,config/*,node_modules/*,vendor/*,*.md --standard=Drupal,DrupalPractice ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.dropfort.com:dropfort/drupal-templates/drupal-module-template.git"
+  },
+  "keywords": [
+    "drupal"
+  ],
+  "author": "Coldfront Labs Inc.",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "@babel/register": "^7.10.3",
+    "@coldfrontlabs/gulp-templates": "^3.0.0",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "commitizen": "^4.1.2",
+    "core-js": "^3.6.5",
+    "core-js-compat": "^3.6.5",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.3.1",
+    "eslint-plugin-drupal-contrib": "^1.0.0",
+    "gulp": "^4.0.2",
+    "husky": "^4.2.5",
+    "postcss": "^7.0.32",
+    "prettier": "^2.0.5",
+    "standard-version": "^9.0.0",
+    "standard-version-updater-yaml": "^1.0.1",
+    "stylelint": "^13.6.1",
+    "stylelint-config-coldfront": "^2.0.0"
+  },
+  "dependencies": {},
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "resolutions": {
+    "yargs-parser": "18.1.2"
+  }
+}

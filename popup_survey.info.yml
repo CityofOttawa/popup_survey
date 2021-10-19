@@ -1,0 +1,9 @@
+name: 'Popup Survey'
+type: module
+description: 'Provides a popup box that can be configured to display only on certain pages and for only 1 out of every X users.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: 'City of Ottawa'
+dependencies:
+  - token:token
+  - drupal:ckeditor

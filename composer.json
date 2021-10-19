@@ -1,0 +1,50 @@
+{
+  "name": "ottca/popup_survey",
+  "type": "drupal-custom-module",
+  "description": "Provides a popup box that can be configured to display only on certain pages and for only 1 out of every X users.",
+  "keywords": [
+    "Drupal"
+  ],
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/CityofOttawa/popup_survey",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "support": {
+    "issues": "https://github.com/CityofOttawa/popup_survey/issues",
+    "source": "https://github.com/CityofOttawa/popup_survey.git"
+  },
+  "authors": [
+    {
+      "name": "Coldfront Labs Inc.",
+      "role": "Developer"
+    }
+  ],
+  "repositories": {
+    "0": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    },
+    "1": {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  },
+  "require": {
+    "drupal/token": "^1.9"
+  },
+  "require-dev": {
+    "composer/composer": "^2.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+    "drupal/coder": "^8.3",
+    "phpcompatibility/php-compatibility": "*"
+  },
+  "config": {
+    "bin-dir": "bin/",
+    "sort-packages": true
+  },
+  "scripts": {
+    "test:phpcompatibility": [
+      "phpcs --ignore='**/core/*,**/testing/*,**/test/*,**/node_modules/*,**/vendor/*,**/bin/*,*.md' --extensions=php,module,inc,install,test,profile,theme --standard=PHPCompatibility -p --runtime-set testVersion 7.2- ./"
+    ]
+  }
+}

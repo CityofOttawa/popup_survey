@@ -1,0 +1,31 @@
+entity.popup_survey.collection:
+  path: '/admin/config/system/popup_survey'
+  defaults:
+    _entity_list: 'popup_survey'
+    _title: 'Popup survey configuration'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.popup_survey.add_form:
+  path: '/admin/config/system/popup_survey/add'
+  defaults:
+    _entity_form: 'popup_survey.add'
+    _title: 'Add popup_survey'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.popup_survey.edit_form:
+  path: '/admin/config/system/popup_survey/{popup_survey}'
+  defaults:
+    _entity_form: 'popup_survey.edit'
+    _title: 'Edit popup_survey'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.popup_survey.delete_form:
+  path: '/admin/config/system/popup_survey/{popup_survey}/delete'
+  defaults:
+    _entity_form: 'popup_survey.delete'
+    _title: 'Delete popup_survey'
+  requirements:
+    _permission: 'administer site configuration'

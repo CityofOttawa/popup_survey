@@ -1,0 +1,46 @@
+{
+  // This file is managed by dropfort/dropfort_build.
+  // Modifications to this file will be overwritten by default.
+
+  // See http://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+  // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+
+  // List of extensions which should be recommended for users of this workspace.
+  "recommendations": [
+      /* HTML, JS*/
+      "esbenp.prettier-vscode",
+      "syler.sass-indented",
+      "mrmlnc.vscode-scss",
+      "stylelint.vscode-stylelint",
+      "Zignd.html-css-class-completion",
+      "christian-kohler.path-intellisense",
+      "stevencl.addDocComments",
+      "dbaeumer.vscode-eslint",
+      "shardulm94.trailing-spaces",
+      "editorconfig.editorconfig",
+
+      /* PHP, Drupal */
+      "felixfbecker.php-debug",
+      "redhat.vscode-yaml",
+      "mblode.twig-language-2",
+      "bmewburn.vscode-intelephense-client",
+      "wongjn.php-sniffer",
+
+      /* Git, Build, Debug */
+      "msjsdiag.debugger-for-chrome",
+      "ms-azuretools.vscode-docker",
+      "ms-vscode-remote.remote-ssh",
+      "github.vscode-pull-request-github",
+      "eamodio.gitlens",
+      "ms-vsliveshare.vsliveshare",
+      "ms-vscode-remote.vscode-remote-extensionpack"
+  ],
+  // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+  "unwantedRecommendations": [
+      "robinbentley.sass-indented",
+      "felixfbecker.php-intellisense",
+      "daosro.stylelint",
+      "ikappas.phpcs",
+      "shevaua.phpcs"
+  ]
+}

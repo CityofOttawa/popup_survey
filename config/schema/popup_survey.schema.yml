@@ -1,0 +1,22 @@
+popup_survey.popup_survey.*:
+  type: config_entity
+  label: 'PopupSurvey config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    cancel_link_title:
+      type: string
+      label: 'Cancel Link Title'
+    popup_body:
+      type: string
+      label: 'Popup Body'
+    survey_link:
+      type: string
+      label: 'Survey Link'
+    survey_link_title:
+      type: string
+      label: 'Survey Link Title'

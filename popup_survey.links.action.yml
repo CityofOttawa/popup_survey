@@ -1,0 +1,5 @@
+entity.popup_survey.add_form:
+  route_name: 'entity.popup_survey.add_form'
+  title: 'Add popup_survey'
+  appears_on:
+    - entity.popup_survey.collection
