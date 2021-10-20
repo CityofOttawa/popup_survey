@@ -9,14 +9,14 @@ popup_survey.popup_survey.*:
       type: label
       label: 'Label'
     cancel_link_title:
-      type: string
+      type: text
       label: 'Cancel Link Title'
     popup_body:
-      type: string
+      type: text
       label: 'Popup Body'
     survey_link:
-      type: string
+      type: text
       label: 'Survey Link'
     survey_link_title:
-      type: string
+      type: text
       label: 'Survey Link Title'

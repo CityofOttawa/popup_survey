@@ -1,0 +1,7 @@
+popup_survey:
+  version: 4.x
+  js:
+    js/popup_survey.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings

@@ -1,13 +1,21 @@
+popup_survey.settings:
+  path: '/admin/config/popup_survey/settings'
+  defaults:
+    _form: '\Drupal\popup_survey\Form\PopupSurveySettingsForm'
+    _title: 'Popup Survey Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
 entity.popup_survey.collection:
-  path: '/admin/config/system/popup_survey'
+  path: '/admin/structure/popup_survey'
   defaults:
     _entity_list: 'popup_survey'
-    _title: 'Popup survey configuration'
+    _title: 'Manage Popup survey config entities'
   requirements:
     _permission: 'administer site configuration'
 
 entity.popup_survey.add_form:
-  path: '/admin/config/system/popup_survey/add'
+  path: '/admin/structure/popup_survey/add'
   defaults:
     _entity_form: 'popup_survey.add'
     _title: 'Add popup_survey'
@@ -15,7 +23,7 @@ entity.popup_survey.add_form:
     _permission: 'administer site configuration'
 
 entity.popup_survey.edit_form:
-  path: '/admin/config/system/popup_survey/{popup_survey}'
+  path: '/admin/structure/popup_survey/{popup_survey}'
   defaults:
     _entity_form: 'popup_survey.edit'
     _title: 'Edit popup_survey'
@@ -23,7 +31,7 @@ entity.popup_survey.edit_form:
     _permission: 'administer site configuration'
 
 entity.popup_survey.delete_form:
-  path: '/admin/config/system/popup_survey/{popup_survey}/delete'
+  path: '/admin/structure/popup_survey/{popup_survey}/delete'
   defaults:
     _entity_form: 'popup_survey.delete'
     _title: 'Delete popup_survey'
