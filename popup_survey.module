@@ -26,7 +26,7 @@ function _popup_survey_admin_settings_validate($form, $form_state) {
 
 
 /**
- * Implements hook_page_build().
+ * Implements hook_page_bottom().
  */
 function popup_survey_page_bottom(array &$page_bottom) {
   // Performance: Skip this entirely for AJAX requests.
@@ -36,12 +36,12 @@ function popup_survey_page_bottom(array &$page_bottom) {
 
   // Skip this if the visitor is logged in or determined to be a crawler.
   $current_user = \Drupal::currentUser();
-  if (FALSE and $current_user->isAuthenticated()) {
+  if ($current_user->isAuthenticated()) {
     return;
   }
 
   $config = \Drupal::configFactory()->get('popup_survey.settings');
-  // Skip this if the bean to display is not set.
+  // Skip if the popup survey config entity to display is not set.
   $popup_config_entity_id = $config->get('popup_survey_config_entity');
   if ($popup_config_entity_id != FALSE) {
     // Randomly skip so that not all users see the popup.
@@ -76,8 +76,6 @@ function popup_survey_page_bottom(array &$page_bottom) {
         if (!$page_match) { return; }
       }
 
-      //$path = drupal_get_path('module', 'popup_survey');
-
       $ua = \Drupal\Component\Utility\Html::escape($config->get('popup_survey_ua_exclude') ?: '');
       $page_bottom['popup_survey'] = [
         '#theme' => 'popup_survey',
@@ -93,19 +91,27 @@ function popup_survey_page_bottom(array &$page_bottom) {
         ],
       ];
       $options = ['every_page' => TRUE];
-      /*
-      $page['page_bottom']['popup_survey'] = ['#attached' => [] ];
-      $attached = &$page['page_bottom']['popup_survey']['#attached'];
+    }
+  }
+}
 
-      drupal_add_js(['POPUP_SURVEY' => ['botlist' => $ua]], ['type' => 'setting']);
-
-      $attached['css'][$path . '/css/popup_survey.css'] = $options;
-      $attached['js'][$path . '/js/popup_survey.js'] = $options;
-      $bean = entity_view('bean', entity_load('bean', [$bid]));
-      $page['page_bottom']['popup_survey']['#markup'] = '<div class="popup-greyout">' . render($bean) . '</div>';
-      */
-
-      // DEBUG: dpm($page['page_bottom']['popup_survey']);
+/**
+ * Implements template_preprocess_HOOK().
+ */
+function popup_survey_preprocess_popup_survey(&$variables) {
+  $config = \Drupal::configFactory()->get('popup_survey.settings');
+  // Skip this if the popup survey config entity to display is not set.
+  $popup_config_entity_id = $config->get('popup_survey_config_entity');
+  if ($popup_config_entity_id != FALSE) {
+    $current_language = \Drupal::languageManager()->getCurrentLanguage();
+    \Drupal::languageManager()->setConfigOverrideLanguage($current_language);
+    $popup_survey = \Drupal::entityTypeManager()->getStorage('popup_survey')->load($popup_config_entity_id);
+    if (!empty($popup_survey)) {
+      $variables['cancel_link_title'] = $popup_survey->cancelLinkTitle();
+      $variables['popup_body'] = $popup_survey->popupBody();
+      $variables['survey_link'] = $popup_survey->surveyLink();
+      $variables['survey_link_title'] = $popup_survey->surveyLinkTitle();
+      $variables['render'] = TRUE;
     }
   }
 }
@@ -117,10 +123,8 @@ function popup_survey_theme($existing, $type, $theme, $path) {
   return [
     'popup_survey' => [
       'variables' => [
-        'cancel_link_title' => 'cancel',
-        'popup_body' => 'Body',
-        'survey_link_url' => '',
-        'survey_link_title' => 'Survey Link Title',
+        // By default don't render. Render if popup survey config entity exists.
+        'render' => FALSE,
       ],
     ],
   ];
