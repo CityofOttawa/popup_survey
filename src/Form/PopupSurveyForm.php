@@ -60,7 +60,7 @@ class PopupSurveyForm extends EntityForm {
     $form['popup_body'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Popup Body'),
-      '#maxlength' => 255,
+      '#maxlength' => 1024,
       '#default_value' => $popup_survey->popupBody(),
       '#description' => $this->t("Body text for the PopupSurvey."),
       '#required' => TRUE,

@@ -109,6 +109,7 @@ function popup_survey_preprocess_popup_survey(&$variables) {
     if (!empty($popup_survey)) {
       $variables['cancel_link_title'] = $popup_survey->cancelLinkTitle();
       $variables['popup_body'] = $popup_survey->popupBody();
+      $variables['popup_title'] = $popup_survey->label();
       $variables['survey_link'] = $popup_survey->surveyLink();
       $variables['survey_link_title'] = $popup_survey->surveyLinkTitle();
       $variables['render'] = TRUE;
