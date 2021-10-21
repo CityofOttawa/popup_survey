@@ -13,9 +13,9 @@
     var cookie = readCookie('ottcity_site_survey');
     if(!cookie) {
       createCookie('ottcity_site_survey','isActive', 14);
+      $('#popupSurveyModal').modal('show');
     }
 
-    $('#popupSurveyModal').modal('show');
   });
 
   $('#popupSurveyAccept').on('click', () => {
