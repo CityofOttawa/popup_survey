@@ -135,6 +135,15 @@ class PopupSurveySettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $ua = $form_state->getValue('popup_survey_ua_exclude');
+    if( strlen($ua) > 0 && (substr($ua,0,1) == '|' || substr($ua,strlen($ua)-1,1)=='|') ) {
+      $form_state->setError($form['popup_survey_ua_exclude'], t('Value cannot start or end with a pipe (|) delimiter'));
+    }
+  }
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Retrieve the configuration.
     $this->configFactory->getEditable(static::SETTINGS)

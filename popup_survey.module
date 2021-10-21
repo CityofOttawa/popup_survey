@@ -15,17 +15,6 @@ define('POPUP_VISIBILITY_NOTLISTED', 0);
 define('POPUP_VISIBILITY_LISTED', 1);
 
 /**
- *  Perform basic input validation
- */
-function _popup_survey_admin_settings_validate($form, $form_state) {
-  $ua = $form_state['values']['popup_survey_ua_exclude'];
-  if( strlen($ua) > 0 && (substr($ua,0,1) == '|' || substr($ua,strlen($ua)-1,1)=='|') ) {
-    form_set_error('popup_survey_ua_exclude', t('Value cannot start or end with a pipe (|) delimiter'));
-  }
-}
-
-
-/**
  * Implements hook_page_bottom().
  */
 function popup_survey_page_bottom(array &$page_bottom) {
@@ -129,26 +118,4 @@ function popup_survey_theme($existing, $type, $theme, $path) {
       ],
     ],
   ];
-}
-
-/**
- * Implements template_preprocess_entity().
- * @param array $var a keyed array with the entity data and meta data.
- */
-function _popup_survey_preprocess_entity(&$var) {
-  if ($var['entity_type'] == 'popup_survey')
-  {
-    $url = $var['content']['field_survey_link'][0]['#markup'];
-    $title = $var['content']['field_survey_link_title'][0]['#markup'];
-    $reject = $var['content']['field_cancel_link_title'][0]['#markup'];
-    // Turn the Survey Link and Survey Link Title fields into one anchor tag.
-    $var['content']['field_survey_link'][0]['#markup'] = '<a href="' . $url . '" target="_blank" title="' . $title . '" id="popup-accept" class="button">' . $title . '</a>';
-    // Turn the Cancel Link Title field into an anchor tag.
-    $var['content']['field_cancel_link_title'][0]['#markup'] = '<a href="#" id="popup-reject" class="button" title="' . t('I do not want to participate in the survey.') . '">' . $reject . '</a>';
-    // Turn the title field into an H2 tag.
-    $var['content']['title_field'][0]['#markup'] = '<h2>' . $var['content']['title_field'][0]['#markup'] . '</h2>';
-    // Add the message class to the bean's container.
-    unset($var['content']['field_survey_link_title']);
-    // DEBUG: dpm($var);
-  }
 }
