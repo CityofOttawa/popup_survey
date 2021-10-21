@@ -13,7 +13,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ cancel_link_title }}</button>
-          <button type="button" class="btn btn-primary">{{ survey_link_title }}</button>
+          <a id="popupSurveyAccept" role="button" class="btn btn-primary" href="{{ survey_link|escape }}">{{ survey_link_title }}</a>
         </div>
       </div>
     </div>

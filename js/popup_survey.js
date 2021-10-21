@@ -18,6 +18,10 @@
     $('#popupSurveyModal').modal('show');
   });
 
+  $('#popupSurveyAccept').on('click', () => {
+    $('#popupSurveyModal').modal('hide');
+  });
+
   function createCookie(name,value,days) {
     var expires = "";
     if (days) {
