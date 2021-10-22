@@ -47,19 +47,10 @@ function popup_survey_page_bottom(array &$page_bottom) {
 
       if( $visibility_pages ) {
         $pages = strtolower($visibility_pages);
-        //$path = strtolower(drupal_get_path_alias($_GET['q']));
         $path = strtolower(\Drupal::service('path.current')->getPath());
-        //$page_match = drupal_match_path($path, $pages);
+        // Strip forward slash prefix from current page path.
+        $path = preg_replace('/^\/(.*)/', '$1', $path);
         $page_match = \Drupal::service('path.matcher')->matchPath($path, $pages);
-        dpm($pages);
-        dpm($path);
-        dpm($page_match);
-        /*
-        if ($path != $_GET['q']) {
-          $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
-        }
-        */
-
         $page_match = !($visibility xor $page_match);
 
         if (!$page_match) { return; }
