@@ -6,16 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
-
-/**
- * Shows this popup on every page except the listed pages.
- */
-define('POPUP_VISIBILITY_NOTLISTED', 0);
-
-/**
- * Shows this block on only the listed pages.
- */
-define('POPUP_VISIBILITY_LISTED', 1);
+use Drupal\popup_survey\PopupSurveyInterface;
 
 /**
  * Implements hook_page_bottom().
@@ -44,7 +35,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
       $visibility = $config->get('popup_survey_visibility_options');
       $visibility_pages = $config->get('popup_survey_visibility_options_pages') ?: '';
 
-      if ($visibility === POPUP_VISIBILITY_LISTED && $visibility_pages == '') {
+      if ($visibility === PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_LISTED && $visibility_pages == '') {
         return;
       }
 
@@ -75,7 +66,6 @@ function popup_survey_page_bottom(array &$page_bottom) {
           ],
         ],
       ];
-      $options = ['every_page' => TRUE];
     }
   }
 }

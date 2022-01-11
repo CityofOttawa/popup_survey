@@ -118,7 +118,9 @@ class PopupSurveyForm extends EntityForm {
   }
 
   /**
-   * Helper function to check whether an PopupSurvey configuration entity exists.
+   * Helper function.
+   *
+   * Check whether an PopupSurvey configuration entity exists.
    */
   public function exist($id) {
     $entity = $this->entityTypeManager->getStorage('popup_survey')->getQuery()

@@ -2,6 +2,7 @@
 
 namespace Drupal\popup_survey\Form;
 
+use Drupal\popup_survey\PopupSurveyInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,15 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Configure popup_survey settings for this site.
  */
 class PopupSurveySettingsForm extends ConfigFormBase {
-  /**
-   * Shows the popup on every page except the listed pages.
-   */
-  const POPUP_VISIBILITY_NOTLISTED = 0;
-
-  /**
-   * Shows the popup on only the listed pages.
-   */
-  const POPUP_VISIBILITY_LISTED = 1;
 
   /**
    * Config settings.
@@ -29,15 +21,17 @@ class PopupSurveySettingsForm extends ConfigFormBase {
   const SETTINGS = 'popup_survey.settings';
 
   /**
+   * Entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entity_manager;
+  protected $entityManager;
 
   /**
    * Class constructor.
    */
-  public function __construct(EntityTypeManagerInterface $entity_manager) {
-    $this->entity_manager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entityManager) {
+    $this->entityManager = $entityManager;
   }
 
   /**
@@ -76,8 +70,8 @@ class PopupSurveySettingsForm extends ConfigFormBase {
     $config_entity_default = ($config->get('popup_survey_config_entity')) ?: 0;
     $form['popup_survey_config_entity'] = [
       '#type'        => 'select',
-      '#title'       => t('Popup Config Entity'),
-      '#description' => t('Select the PopupSurvey config entity that you would like to display to visitors as the survey invitation. If you wish not to display the popup select \'none\' for the popup block.'),
+      '#title'       => $this->t('Popup Config Entity'),
+      '#description' => $this->t("Select the PopupSurvey config entity that you would like to display to visitors as the survey invitation. If you wish not to display the popup select 'none' for the popup block."),
       '#options'     => $this->popupSurveyEntityOptions(),
       '#default_value' => $config_entity_default,
       '#required' => TRUE,
@@ -86,8 +80,8 @@ class PopupSurveySettingsForm extends ConfigFormBase {
     $frequency_default = ($config->get('popup_survey_frequency')) ?: 1;
     $form['popup_survey_frequency'] = [
       '#type'        => 'select',
-      '#title'       => t('Popup Frequency'),
-      '#description' => t('Display the popup for one out of every # visitors.'),
+      '#title'       => $this->t('Popup Frequency'),
+      '#description' => $this->t('Display the popup for one out of every # visitors.'),
       '#options'     => $this->popupSurveyFrequencyOptions(),
       '#default_value' => $frequency_default,
       '#required' => TRUE,
@@ -96,36 +90,43 @@ class PopupSurveySettingsForm extends ConfigFormBase {
     // Visibility settings.
     $form['visibility_title'] = [
       '#type' => 'item',
-      '#title' => t('Visibility settings'),
+      '#title' => $this->t('Visibility settings'),
     ];
 
     $options = [
-      self::POPUP_VISIBILITY_NOTLISTED => t('All pages except those listed'),
-      self::POPUP_VISIBILITY_LISTED => t('Only the listed pages'),
+      PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_NOTLISTED => $this->t('All pages except those listed'),
+      PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_LISTED => $this->t('Only the listed pages'),
     ];
 
     $ua_exclude_default = ($config->get('popup_survey_ua_exclude')) ?: 'alexa|bot|crawl|bing|facebookexternalhit|feedburner|google|preview|nagios|postrank|pingdom|slurp|spider|yahoo|yandex|sogou';
     $form['popup_survey_ua_exclude'] = [
       '#type' => 'textarea',
-      '#title' => t('Block blacklist'),
-      '#description' => t('User agents that match the list will not be presented with the survey popup.  Separate terms by a pipe (|) without spaces.  Do not enter line breaks.'),
+      '#title' => $this->t('Block blacklist'),
+      '#description' => $this->t('User agents that match the list will not be presented with the survey popup.  Separate terms by a pipe (|) without spaces.  Do not enter line breaks.'),
       '#default_value' => $ua_exclude_default,
     ];
 
-    $visibility_options_default = ($config->get('popup_survey_visibility_options')) ?: self::POPUP_VISIBILITY_NOTLISTED;
+    $visibility_options_default = ($config->get('popup_survey_visibility_options')) ?: PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_NOTLISTED;
     $form['popup_survey_visibility_options'] = [
       '#type' => 'radios',
-      '#title' => t('Show block on specific pages'),
+      '#title' => $this->t('Show block on specific pages'),
       '#options' => $options,
       '#default_value' => $visibility_options_default,
     ];
 
-    $visibility_options_pages_default = ($config->get('popup_survey_visibility_options_pages')) ?: '';
+    $visibility_options_pages_default = $config->get('popup_survey_visibility_options_pages') ? $config->get('popup_survey_visibility_options_pages') : '';
     $form['popup_survey_visibility_options_pages'] = [
       '#type' => 'textarea',
-      '#title' => '<span class="element-invisible">' . t('Pages') . '</span>',
+      '#title' => '<span class="element-invisible">' . $this->t('Pages') . '</span>',
       '#default_value' => $visibility_options_pages_default,
-      '#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => 'blog', '%blog-wildcard' => 'blog/*', '%front' => '<front>']),
+      '#description' => $this->t(
+        "Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.",
+        [
+          '%blog' => 'blog',
+          '%blog-wildcard' => 'blog/*',
+          '%front' => '<front>',
+        ]
+      ),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -137,7 +138,7 @@ class PopupSurveySettingsForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $ua = $form_state->getValue('popup_survey_ua_exclude');
     if (strlen($ua) > 0 && (substr($ua, 0, 1) == '|' || substr($ua, strlen($ua) - 1, 1) == '|')) {
-      $form_state->setError($form['popup_survey_ua_exclude'], t('Value cannot start or end with a pipe (|) delimiter'));
+      $form_state->setError($form['popup_survey_ua_exclude'], $this->t('Value cannot start or end with a pipe (|) delimiter'));
     }
   }
 
@@ -162,7 +163,7 @@ class PopupSurveySettingsForm extends ConfigFormBase {
    * Return the list of options.
    */
   protected function popupSurveyEntityOptions() {
-    $entities = $this->entity_manager->getStorage('popup_survey')->loadMultiple();
+    $entities = $this->entityManager->getStorage('popup_survey')->loadMultiple();
     return array_combine($val = array_keys($entities), $val);
   }
 
