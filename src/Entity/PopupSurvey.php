@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\popup_survey\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -75,22 +76,32 @@ class PopupSurvey extends ConfigEntityBase implements PopupSurveyInterface {
    */
   protected $survey_link_title;
 
-  // Your specific configuration property get/set methods go here,
-  // implementing the interface.
-
+  /**
+   * Implementing the interface.
+   */
   public function cancelLinkTitle() {
     return $this->cancel_link_title;
   }
 
+  /**
+   * Get the body text.
+   */
   public function popupBody() {
     return $this->popup_body;
   }
 
+  /**
+   * Get the survey link.
+   */
   public function surveyLink() {
     return $this->survey_link;
   }
 
+  /**
+   * Get the link title.
+   */
   public function surveyLinkTitle() {
     return $this->survey_link_title;
   }
+
 }

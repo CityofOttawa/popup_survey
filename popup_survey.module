@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Code for the Popup Survey feature.
  */
+
+use Drupal\Component\Utility\Html;
 
 /**
  * Shows this popup on every page except the listed pages.
@@ -35,7 +38,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
   if ($popup_config_entity_id != FALSE) {
     // Randomly skip so that not all users see the popup.
     $frequency = $config->get('popup_survey_frequency') ?: 1;
-    if( mt_rand(1, $frequency) === 1 ) {
+    if (mt_rand(1, $frequency) === 1) {
 
       // Limited visibility popups must list at least one page.
       $visibility = $config->get('popup_survey_visibility_options');
@@ -45,7 +48,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
         return;
       }
 
-      if( $visibility_pages ) {
+      if ($visibility_pages) {
         $pages = strtolower($visibility_pages);
         $path = strtolower(\Drupal::service('path.current')->getPath());
         // Strip forward slash prefix from current page path.
@@ -53,10 +56,12 @@ function popup_survey_page_bottom(array &$page_bottom) {
         $page_match = \Drupal::service('path.matcher')->matchPath($path, $pages);
         $page_match = !($visibility xor $page_match);
 
-        if (!$page_match) { return; }
+        if (!$page_match) {
+          return;
+        }
       }
 
-      $ua = \Drupal\Component\Utility\Html::escape($config->get('popup_survey_ua_exclude') ?: '');
+      $ua = Html::escape($config->get('popup_survey_ua_exclude') ?: '');
       $page_bottom['popup_survey'] = [
         '#theme' => 'popup_survey',
         '#attached' => [

@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\popup_survey\Controller;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
@@ -26,7 +27,6 @@ class PopupSurveyListBuilder extends ConfigEntityListBuilder {
     $row['id'] = $entity->id();
 
     // You probably want a few more properties here...
-
     return $row + parent::buildRow($entity);
   }
 
