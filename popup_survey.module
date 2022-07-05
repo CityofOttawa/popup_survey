@@ -42,6 +42,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
       if ($visibility_pages) {
         $pages = strtolower($visibility_pages);
         $path = strtolower(\Drupal::service('path.current')->getPath());
+        $path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
         // Strip forward slash prefix from current page path.
         $path = preg_replace('/^\/(.*)/', '$1', $path);
         $page_match = \Drupal::service('path.matcher')->matchPath($path, $pages);
