@@ -83,6 +83,23 @@ class PopupSurveyForm extends EntityForm {
       '#description' => $this->t("Survey link title for the PopupSurvey."),
       '#required' => TRUE,
     ];
+
+    $form['visibility_override'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use as override'),
+      '#default_value' => $popup_survey->visibilityOverride(),
+      '#description' => $this->t(
+        "Enable this survey to override the default survey."),
+    ];
+
+    $form['visibility_override_pages'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Override Pages'),
+      '#default_value' => $popup_survey->visibilityOverridePages(),
+      '#description' => $this->t(
+        "Specify pages where to override the default popup survey."),
+    ];
+
     $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => $popup_survey->id(),

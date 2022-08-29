@@ -19,5 +19,34 @@ interface PopupSurveyInterface extends ConfigEntityInterface {
    */
   const POPUP_SURVEY_VISIBILITY_LISTED = 1;
 
-  // Add get/set methods for your configuration properties here.
+  /**
+   * Get the cancel link.
+   */
+  public function cancelLinkTitle();
+
+  /**
+   * Get the body text.
+   */
+  public function popupBody();
+
+  /**
+   * Get the survey link.
+   */
+  public function surveyLink();
+
+  /**
+   * Get the link title.
+   */
+  public function surveyLinkTitle();
+
+  /**
+   * Get the override pages.
+   */
+  public function visibilityOverridePages();
+
+  /**
+   * Get override flag.
+   */
+  public function visibilityOverride();
+
 }

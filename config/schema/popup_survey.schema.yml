@@ -20,3 +20,9 @@ popup_survey.popup_survey.*:
     survey_link_title:
       type: text
       label: 'Survey Link Title'
+    visibility_override:
+      type: boolean
+      label: 'Enable as override'
+    visibility_override_pages:
+      type: text
+      label: 'Visibility override pages'

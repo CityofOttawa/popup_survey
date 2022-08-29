@@ -70,8 +70,8 @@ class PopupSurveySettingsForm extends ConfigFormBase {
     $config_entity_default = ($config->get('popup_survey_config_entity')) ?: 0;
     $form['popup_survey_config_entity'] = [
       '#type'        => 'select',
-      '#title'       => $this->t('Popup Config Entity'),
-      '#description' => $this->t("Select the PopupSurvey config entity that you would like to display to visitors as the survey invitation. If you wish not to display the popup select 'none' for the popup block."),
+      '#title'       => $this->t('Default Popup Survey'),
+      '#description' => $this->t("Select the default popup survey to display to visitors as the survey invitation. If you wish not to display the popup select 'none' for the popup block."),
       '#options'     => $this->popupSurveyEntityOptions(),
       '#default_value' => $config_entity_default,
       '#required' => TRUE,
