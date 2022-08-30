@@ -26,6 +26,8 @@ function popup_survey_page_bottom(array &$page_bottom) {
   $config = \Drupal::configFactory()->get('popup_survey.settings');
   // Skip if the popup survey config entity to display is not set.
   $popup_config_entity_id = $config->get('popup_survey_config_entity');
+
+  // Check if surveys are enabled at all.
   if ($popup_config_entity_id != FALSE) {
     // Randomly skip so that not all users see the popup.
     $frequency = $config->get('popup_survey_frequency') ?: 1;
@@ -39,13 +41,15 @@ function popup_survey_page_bottom(array &$page_bottom) {
         return;
       }
 
+      // Get the current aliased path.
+      $path = strtolower(\Drupal::service('path.current')->getPath());
+      $current_path_alias = $path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
+      // Strip forward slash prefix from current page path.
+      $current_path_alias = preg_replace('/^\/(.*)/', '$1', $current_path_alias);
       if ($visibility_pages) {
         $pages = strtolower($visibility_pages);
-        $path = strtolower(\Drupal::service('path.current')->getPath());
-        $path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
         // Strip forward slash prefix from current page path.
-        $path = preg_replace('/^\/(.*)/', '$1', $path);
-        $page_match = \Drupal::service('path.matcher')->matchPath($path, $pages);
+        $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
         $page_match = !($visibility xor $page_match);
 
         if (!$page_match) {
@@ -53,9 +57,35 @@ function popup_survey_page_bottom(array &$page_bottom) {
         }
       }
 
+      // Lastly, check for any config entities which would override at this
+      // path.
+      $surveys = \Drupal::entityTypeManager()->getStorage('popup_survey')->loadByProperties(['visibility_override' => TRUE]);
+      foreach ($surveys as $survey) {
+        if (!empty($survey->visibilityOverridePages())) {
+          $pages = strtolower($survey->visibilityOverridePages());
+          $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
+
+          // Break on the first survey which matches.
+          if ($page_match) {
+            $popup_config_entity_id = $survey->id();
+            break;
+          }
+        }
+      }
+
       $ua = Html::escape($config->get('popup_survey_ua_exclude') ?: '');
       $page_bottom['popup_survey'] = [
         '#theme' => 'popup_survey',
+        '#survey_id' => $popup_config_entity_id,
+        '#cache' => [
+          'contexts' => [
+            'url.path',
+          ],
+          'tags' => [
+            'popup_survey_list',
+            'config:popup_survey.settings',
+          ],
+        ],
         '#attached' => [
           'library' => [
             'popup_survey/popup_survey',
@@ -75,13 +105,16 @@ function popup_survey_page_bottom(array &$page_bottom) {
  * Implements template_preprocess_HOOK().
  */
 function popup_survey_preprocess_popup_survey(&$variables) {
-  $config = \Drupal::configFactory()->get('popup_survey.settings');
   // Skip this if the popup survey config entity to display is not set.
-  $popup_config_entity_id = $config->get('popup_survey_config_entity');
-  if ($popup_config_entity_id != FALSE) {
+  if (empty($variables['survey_id'])) {
+    $config = \Drupal::configFactory()->get('popup_survey.settings');
+    $variables['survey_id'] = $config->get('popup_survey_config_entity');
+  }
+
+  if ($variables['survey_id'] != FALSE) {
     $current_language = \Drupal::languageManager()->getCurrentLanguage();
     \Drupal::languageManager()->setConfigOverrideLanguage($current_language);
-    $popup_survey = \Drupal::entityTypeManager()->getStorage('popup_survey')->load($popup_config_entity_id);
+    $popup_survey = \Drupal::entityTypeManager()->getStorage('popup_survey')->load($variables['survey_id']);
     if (!empty($popup_survey)) {
       $variables['cancel_link_title'] = $popup_survey->cancelLinkTitle();
       $variables['popup_body'] = $popup_survey->popupBody();
@@ -102,6 +135,7 @@ function popup_survey_theme($existing, $type, $theme, $path) {
       'variables' => [
         // By default don't render. Render if popup survey config entity exists.
         'render' => FALSE,
+        'survey_id' => FALSE,
       ],
     ],
   ];
