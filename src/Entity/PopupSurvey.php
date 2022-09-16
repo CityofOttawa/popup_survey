@@ -33,7 +33,8 @@ use Drupal\popup_survey\PopupSurveyInterface;
  *     "survey_link",
  *     "survey_link_title",
  *     "visibility_override",
- *     "visibility_override_pages"
+ *     "visibility_override_pages",
+ *     "frequency_override"
  *   },
  *   links = {
  *     "edit-form" = "/admin/config/system/popup_survey/{popup_survey}",
@@ -93,6 +94,13 @@ class PopupSurvey extends ConfigEntityBase implements PopupSurveyInterface {
   protected $visibility_override_pages;
 
   /**
+   * The PopupSurvey override frequency.
+   *
+   * @var string
+   */
+  protected $frequency_override;
+
+  /**
    * Implementing the interface.
    */
   public function cancelLinkTitle() {
@@ -132,6 +140,13 @@ class PopupSurvey extends ConfigEntityBase implements PopupSurveyInterface {
    */
   public function visibilityOverride() {
     return (bool) $this->visibility_override;
+  }
+
+  /**
+   * Get override frequency.
+   */
+  public function frequencyOverride() {
+    return $this->frequency_override;
   }
 
 }

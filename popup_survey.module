@@ -26,52 +26,55 @@ function popup_survey_page_bottom(array &$page_bottom) {
   $config = \Drupal::configFactory()->get('popup_survey.settings');
   // Skip if the popup survey config entity to display is not set.
   $popup_config_entity_id = $config->get('popup_survey_config_entity');
+  $frequency_override = NULL;
 
   // Check if surveys are enabled at all.
   if ($popup_config_entity_id != FALSE) {
-    // Randomly skip so that not all users see the popup.
-    $frequency = $config->get('popup_survey_frequency') ?: 1;
-    if (mt_rand(1, $frequency) === 1) {
 
-      // Limited visibility popups must list at least one page.
-      $visibility = $config->get('popup_survey_visibility_options');
-      $visibility_pages = $config->get('popup_survey_visibility_options_pages') ?: '';
+    // Limited visibility popups must list at least one page.
+    $visibility = $config->get('popup_survey_visibility_options');
+    $visibility_pages = $config->get('popup_survey_visibility_options_pages') ?: '';
 
-      if ($visibility === PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_LISTED && $visibility_pages == '') {
+    if ($visibility === PopupSurveyInterface::POPUP_SURVEY_VISIBILITY_LISTED && $visibility_pages == '') {
+      return;
+    }
+
+    // Get the current aliased path.
+    $path = strtolower(\Drupal::service('path.current')->getPath());
+    $current_path_alias = $path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
+    // Strip forward slash prefix from current page path.
+    $current_path_alias = preg_replace('/^\/(.*)/', '$1', $current_path_alias);
+    if ($visibility_pages) {
+      $pages = strtolower($visibility_pages);
+      // Strip forward slash prefix from current page path.
+      $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
+      $page_match = !($visibility xor $page_match);
+
+      if (!$page_match) {
         return;
       }
+    }
 
-      // Get the current aliased path.
-      $path = strtolower(\Drupal::service('path.current')->getPath());
-      $current_path_alias = $path = \Drupal::service('path_alias.manager')->getAliasByPath($path);
-      // Strip forward slash prefix from current page path.
-      $current_path_alias = preg_replace('/^\/(.*)/', '$1', $current_path_alias);
-      if ($visibility_pages) {
-        $pages = strtolower($visibility_pages);
-        // Strip forward slash prefix from current page path.
+    // Lastly, check for any config entities which would override at this
+    // path.
+    $surveys = \Drupal::entityTypeManager()->getStorage('popup_survey')->loadByProperties(['visibility_override' => TRUE]);
+    foreach ($surveys as $survey) {
+      if (!empty($survey->visibilityOverridePages())) {
+        $pages = strtolower($survey->visibilityOverridePages());
         $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
-        $page_match = !($visibility xor $page_match);
+        $frequency_override = $survey->frequencyOverride();
 
-        if (!$page_match) {
-          return;
+        // Break on the first survey which matches.
+        if ($page_match) {
+          $popup_config_entity_id = $survey->id();
+          break;
         }
       }
+    }
 
-      // Lastly, check for any config entities which would override at this
-      // path.
-      $surveys = \Drupal::entityTypeManager()->getStorage('popup_survey')->loadByProperties(['visibility_override' => TRUE]);
-      foreach ($surveys as $survey) {
-        if (!empty($survey->visibilityOverridePages())) {
-          $pages = strtolower($survey->visibilityOverridePages());
-          $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
-
-          // Break on the first survey which matches.
-          if ($page_match) {
-            $popup_config_entity_id = $survey->id();
-            break;
-          }
-        }
-      }
+    // Randomly skip so that not all users see the popup.
+    $frequency = $frequency_override ?? $config->get('popup_survey_frequency') ?: 1;
+    if (mt_rand(1, $frequency) === 1) {
 
       $ua = Html::escape($config->get('popup_survey_ua_exclude') ?: '');
       $page_bottom['popup_survey'] = [
