@@ -49,4 +49,8 @@ interface PopupSurveyInterface extends ConfigEntityInterface {
    */
   public function visibilityOverride();
 
+  /**
+   * Get override frequency.
+   */
+  public function frequencyOverride();
 }

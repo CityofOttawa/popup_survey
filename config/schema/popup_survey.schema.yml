@@ -26,3 +26,6 @@ popup_survey.popup_survey.*:
     visibility_override_pages:
       type: text
       label: 'Visibility override pages'
+    frequency_override:
+      type: integer
+      label: 'Frequency override'

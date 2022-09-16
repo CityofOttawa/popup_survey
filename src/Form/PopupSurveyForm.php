@@ -94,10 +94,35 @@ class PopupSurveyForm extends EntityForm {
 
     $form['visibility_override_pages'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Override Pages'),
+      '#title' => $this->t('Override Page Paths'),
       '#default_value' => $popup_survey->visibilityOverridePages(),
-      '#description' => $this->t(
-        "Specify pages where to override the default popup survey."),
+      '#description' => $this->t("Specify pages where to override the default popup survey. Include paths each language separately. Do not include the language prefix."),
+      '#attributes' => [
+        'placeholder' => "e.g. parking-roads-and-travel/parking-and-provincial-offences-act-tickets\r\nstationnement-routes-et-deplacements/contraventions-de-stationnement-et-infractions-provinciales"
+      ],
+      '#states' => [
+        'visible' => [
+          ':input[name="visibility_override"]' => ['checked' => TRUE],
+        ],
+        'required' => [
+          ':input[name="visibility_override"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['frequency_override'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Frequency override'),
+      '#default_value' => $popup_survey->frequencyOverride(),
+      '#description' => $this->t("Override the frequency of the default popup survey."),
+      '#min' => 1,
+      '#step' => 1,
+      '#size' => 10,
+      '#states' => [
+        'visible' => [
+          ':input[name="visibility_override"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     $form['id'] = [
