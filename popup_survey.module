@@ -62,10 +62,10 @@ function popup_survey_page_bottom(array &$page_bottom) {
       if (!empty($survey->visibilityOverridePages())) {
         $pages = strtolower($survey->visibilityOverridePages());
         $page_match = \Drupal::service('path.matcher')->matchPath($current_path_alias, $pages);
-        $frequency_override = $survey->frequencyOverride();
 
         // Break on the first survey which matches.
         if ($page_match) {
+          $frequency_override = $survey->frequencyOverride();
           $popup_config_entity_id = $survey->id();
           break;
         }
