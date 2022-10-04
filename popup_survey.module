@@ -81,13 +81,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
         '#theme' => 'popup_survey',
         '#survey_id' => $popup_config_entity_id,
         '#cache' => [
-          'contexts' => [
-            'url.path',
-          ],
-          'tags' => [
-            'popup_survey_list',
-            'config:popup_survey.settings',
-          ],
+          'max-age' => 0,
         ],
         '#attached' => [
           'library' => [
