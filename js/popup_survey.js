@@ -24,7 +24,7 @@
     }
 
     // If the cookie already exists, return.
-    if (cookie === null) {
+    if (cookie !== null) {
       return;
     }
 

@@ -73,11 +73,20 @@ function popup_survey_page_bottom(array &$page_bottom) {
     }
 
     // Randomly skip so that not all users see the popup.
-    $frequency = $frequency_override ?? $config->get('popup_survey_frequency') ?: 1;
+    $frequency = $frequency_override ?? $config->get('popup_survey_frequency') ?: 0;
     $ua = Html::escape($config->get('popup_survey_ua_exclude') ?: '');
     $page_bottom['popup_survey'] = [
       '#theme' => 'popup_survey',
       '#survey_id' => $popup_config_entity_id,
+      '#cache' => [
+        'contexts' => [
+          'url.path',
+        ],
+        'tags' => [
+          'popup_survey_list',
+          'config:popup_survey.settings',
+        ],
+      ],
       '#attached' => [
         'library' => [
           'popup_survey/popup_survey',
