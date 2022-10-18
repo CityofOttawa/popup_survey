@@ -6,7 +6,7 @@
   // Get the settings provided by Drupal.
   const { frequency, botlist } = drupalSettings.popup_survey;
   // Generate a random number between 1 and the set frequency.
-  const frequencyCheck = Math.floor(Math.random() * (frequency - 1) + 1);
+  const frequencyCheck = Math.round(Math.random() * (frequency - 1) + 1);
   // Create the RegEx for the botlist.
   const bots = new RegExp(botlist, "i");
   // Get the ottcity_site_survey cookie.
