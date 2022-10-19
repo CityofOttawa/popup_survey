@@ -83,7 +83,7 @@ function popup_survey_page_bottom(array &$page_bottom) {
           'url.path',
         ],
         'tags' => [
-          'popup_survey_list',
+          'config:popup_survey_list',
           'config:popup_survey.settings',
         ],
       ],
