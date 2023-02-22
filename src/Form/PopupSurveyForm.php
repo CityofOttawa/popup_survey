@@ -98,7 +98,7 @@ class PopupSurveyForm extends EntityForm {
       '#default_value' => $popup_survey->visibilityOverridePages(),
       '#description' => $this->t("Specify pages where to override the default popup survey. Include paths each language separately. Do not include the language prefix."),
       '#attributes' => [
-        'placeholder' => "e.g. parking-roads-and-travel/parking-and-provincial-offences-act-tickets\r\nstationnement-routes-et-deplacements/contraventions-de-stationnement-et-infractions-provinciales"
+        'placeholder' => "e.g. parking-roads-and-travel/parking-and-provincial-offences-act-tickets\r\nstationnement-routes-et-deplacements/contraventions-de-stationnement-et-infractions-provinciales",
       ],
       '#states' => [
         'visible' => [
